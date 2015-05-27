@@ -4,26 +4,21 @@ import commands
 import time
 
 lcd = LCD.Adafruit_CharLCDPlate()
-lcd.set_backlight(1)
-lcd.enable_display(1)
+lcd.set_backlight(0)
+lcd.enable_display(0)
 
 LINE1 = ''
 LINE2 = ''
 ENABLE_LCD = 0
+STATS = 0
 SITE = 4
 CURRENT = ''
-while (SITE < 8):
-        CURRENT = commands.getoutput('mpc current')
+while not(lcd.is_pressed(LCD.RIGHT)):
         lcd.home()
-        if SITE == 0:
-                lcd.set_backlight(0)
-        if SITE > 0:
-                lcd.set_backlight(1)
+        CURRENT = commands.getoutput('mpc current')
         if CURRENT is not None:
-                SITE = 2
-        if SITE == 1:
-                MESSAGE = 'Station:        \n' +showInfo.showCurrentStation()
-        if SITE == 2:
+                lcd.enable_display(1)
+                lcd.set_backlight(1)
                 LINE1 = showInfo.showCurrentArtist()
                 LINE2 = showInfo.showCurrentTitle()
         if SITE == 3:
@@ -44,9 +39,14 @@ while (SITE < 8):
         if SITE == 13:
                 MESSAGE = 'Temperatur      :\n' +showInfo.showTemp()+' C'
         if lcd.is_pressed(LCD.UP):
-                SITE = SITE + 1
+                //Volume up
         if lcd.is_pressed(LCD.DOWN):
-                SITE = SITE - 1
+                //Volume Down
+        if lcd.is_pressed(LCD.LEFT):
+                if STATS == 1:
+                        SITE = SITE + 1
+                else:
+                        STATS = 1      
        while len(LINE1) < 16:
                 LINE1 = LINE1 + ' '
         while len(LINE2) < 16:
